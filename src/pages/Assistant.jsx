@@ -30,6 +30,7 @@ export default function Assistant() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [renamingId, setRenamingId] = useState(null);
   const [renameValue, setRenameValue] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
   const bottomRef = useRef();
   const inputRef = useRef();
   const streamingTextRef = useRef("");
@@ -97,8 +98,10 @@ export default function Assistant() {
     if (sessionId === id) navigate("/assistant");
   }
 
-  async function send() {
-    if (!input.trim() || streaming) return;
+  async function send(overrideText) {
+    const userText = overrideText ?? input;
+    if (!userText.trim() || streaming) return;
+    setSuggestions([]);
     let targetId = sessionId;
     if (!targetId) {
       const session = await api.createChatSession();
@@ -108,8 +111,7 @@ export default function Assistant() {
       navigate(`/assistant/${targetId}`, { replace: true });
     }
 
-    const userText = input;
-    setInput("");
+    if (!overrideText) setInput("");
     setMessages((prev) => [...prev, { id: "tmp-user", role: "user", content: userText }]);
     setStreaming(true);
     streamingTextRef.current = "";
@@ -147,6 +149,7 @@ export default function Assistant() {
             return copy;
           });
         }
+        if (data.suggestions) setSuggestions(data.suggestions);
       }
     }
 
@@ -274,6 +277,19 @@ export default function Assistant() {
               </div>
               );
             })}
+            {suggestions.length > 0 && !streaming && (
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => send(s)}
+                    className="text-sm px-3 py-1.5 rounded-full border border-border hover:border-primary hover:bg-accent transition-colors"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
             <div ref={bottomRef} />
           </div>
         </div>
