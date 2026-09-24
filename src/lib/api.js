@@ -102,6 +102,11 @@ export const api = {
     request(`/chat/sessions/${id}`, { method: "PATCH", body: JSON.stringify({ title }) }),
   deleteChatSession: (id) => request(`/chat/sessions/${id}`, { method: "DELETE" }),
 
+  sheets: () => request("/sheets"),
+  createSheet: (data) => request("/sheets", { method: "POST", body: JSON.stringify(data) }),
+  updateSheet: (id, data) => request(`/sheets/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteSheet: (id) => request(`/sheets/${id}`, { method: "DELETE" }),
+
   fileUrl: (kind, id) => `${BASE}/files/${kind}/${id}`,
   async downloadFile(kind, id, filename) {
     const res = await fetch(`${BASE}/files/${kind}/${id}`, {

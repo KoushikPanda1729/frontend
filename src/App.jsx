@@ -9,6 +9,7 @@ import EmployeeDetail from "./pages/EmployeeDetail";
 import Notes from "./pages/Notes";
 import Assistant from "./pages/Assistant";
 import CalendarPage from "./pages/Calendar";
+import Sheets from "./pages/Sheets";
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem("hr_token");
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="employees/:id" element={<EmployeeDetail />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="notes" element={<Notes />} />
+        <Route path="sheets" element={<Sheets />} />
         <Route path="assistant" element={<Assistant />} />
         <Route path="assistant/:sessionId" element={<Assistant />} />
       </Route>

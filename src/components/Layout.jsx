@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
-import { LayoutDashboard, Users, UserCheck, StickyNote, MessageSquare, Menu, LogOut, Sun, Moon, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Users, UserCheck, StickyNote, MessageSquare, Menu, LogOut, Sun, Moon, CalendarDays, Table } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useTheme } from "../lib/theme";
 
@@ -10,6 +10,7 @@ const NAV = [
   { to: "/employees", label: "Employees", icon: Users },
   { to: "/calendar", label: "Interview Calendar", icon: CalendarDays },
   { to: "/notes", label: "HR Notes", icon: StickyNote },
+  { to: "/sheets", label: "Sheets", icon: Table },
   { to: "/assistant", label: "AI Assistant", icon: MessageSquare },
 ];
 
