@@ -16,7 +16,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "../components/ui/sheet";
-import { Plus, Upload, FileText, CheckCircle2, XCircle, X } from "lucide-react";
+import { Plus, Upload, FileText, CheckCircle2, XCircle, X, Download } from "lucide-react";
 
 const STAGES = ["APPLIED", "SCREENING", "INTERVIEW", "OFFER", "ONBOARDING", "HIRED", "REJECTED"];
 const STAGE_LABELS = {
@@ -304,6 +304,9 @@ export default function Candidates() {
           <p className="text-muted-foreground text-sm">Track candidates from application through onboarding</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => api.downloadCsv(api.candidatesExportUrl(), "candidates.csv")}>
+            <Download className="h-4 w-4" />Export CSV
+          </Button>
           <AddCandidateDialog onDone={load} />
           <UploadResumesDialog open={uploadOpen} setOpen={setUploadOpen} onDone={load} />
         </div>
@@ -323,7 +326,7 @@ export default function Candidates() {
                   const latestScore = c.resumes?.[0]?.score;
                   return (
                     <Link key={c.id} to={`/candidates/${c.id}`}>
-                      <Card className="hover:border-primary transition-colors">
+                      <Card className="hover:border-primary hover:shadow-sm transition-all">
                         <CardContent className="p-3 space-y-1.5">
                           <div className="font-medium text-sm truncate" title={c.name}>{c.name}</div>
                           <div className="text-xs text-muted-foreground truncate" title={c.roleAppliedFor}>{c.roleAppliedFor}</div>

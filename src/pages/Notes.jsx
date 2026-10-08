@@ -461,7 +461,12 @@ function LinkedNotes() {
 
   return (
     <div className="space-y-3">
-      {notes.length === 0 && <p className="text-sm text-muted-foreground">No notes yet.</p>}
+      {notes.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 text-center gap-2">
+          <StickyNote className="h-8 w-8 text-muted-foreground opacity-40" />
+          <p className="text-sm text-muted-foreground">No linked notes yet.</p>
+        </div>
+      )}
       {notes.map((n) => {
         const target = n.candidate
           ? { label: n.candidate.name, to: `/candidates/${n.candidate.id}`, kind: "Candidate" }
@@ -469,7 +474,7 @@ function LinkedNotes() {
           ? { label: n.employee.name, to: `/employees/${n.employee.id}`, kind: "Employee" }
           : null;
         return (
-          <Card key={n.id}>
+          <Card key={n.id} className="group hover:shadow-sm transition-all">
             <CardContent className="pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
@@ -488,9 +493,12 @@ function LinkedNotes() {
                     )}
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(n.id)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                <button
+                  onClick={() => setDeleteTarget(n.id)}
+                  className="shrink-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
             </CardContent>
           </Card>

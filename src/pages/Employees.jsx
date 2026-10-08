@@ -15,7 +15,16 @@ import {
   SheetTrigger,
   SheetClose,
 } from "../components/ui/sheet";
-import { Plus } from "lucide-react";
+import { Plus, Users, Download } from "lucide-react";
+
+function initials(name) {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 const STATUS_VARIANT = {
   ACTIVE: "success",
@@ -67,6 +76,10 @@ export default function Employees() {
           <h1 className="text-2xl font-bold">Employees</h1>
           <p className="text-muted-foreground text-sm">Employee records and documents</p>
         </div>
+        <div className="flex items-center gap-2">
+        <Button variant="outline" onClick={() => api.downloadCsv(api.employeesExportUrl(), "employees.csv")}>
+          <Download className="h-4 w-4" />Export CSV
+        </Button>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button><Plus className="h-4 w-4" />Add employee</Button>
@@ -116,29 +129,38 @@ export default function Employees() {
             </form>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {employees.map((emp) => (
           <Link key={emp.id} to={`/employees/${emp.id}`}>
-            <Card className="hover:border-primary transition-colors h-full">
-              <CardContent className="pt-5 space-y-2">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="font-semibold">{emp.name}</div>
-                    <div className="text-xs text-muted-foreground">{emp.employeeCode}</div>
+            <Card className="hover:border-primary hover:shadow-sm transition-all h-full">
+              <CardContent className="p-4 flex items-start gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-sm font-semibold text-primary">
+                  {initials(emp.name)}
+                </div>
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="font-semibold truncate">{emp.name}</div>
+                    <Badge variant={STATUS_VARIANT[emp.status] || "secondary"} className="shrink-0">{emp.status}</Badge>
                   </div>
-                  <Badge variant={STATUS_VARIANT[emp.status] || "secondary"}>{emp.status}</Badge>
+                  <div className="text-xs text-muted-foreground">{emp.employeeCode}</div>
+                  <div className="text-sm text-muted-foreground mt-1 truncate">
+                    {emp.designation || "No designation"} {emp.department ? `· ${emp.department}` : ""}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{emp.documents?.length || 0} document(s)</div>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {emp.designation || "No designation"} {emp.department ? `· ${emp.department}` : ""}
-                </div>
-                <div className="text-xs text-muted-foreground">{emp.documents?.length || 0} document(s)</div>
               </CardContent>
             </Card>
           </Link>
         ))}
-        {employees.length === 0 && <p className="text-sm text-muted-foreground">No employees yet.</p>}
+        {employees.length === 0 && (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center gap-2">
+            <Users className="h-8 w-8 text-muted-foreground opacity-40" />
+            <p className="text-sm text-muted-foreground">No employees yet. Add one to get started.</p>
+          </div>
+        )}
       </div>
     </div>
   );

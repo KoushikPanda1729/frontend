@@ -62,7 +62,10 @@ export default function CalendarPage() {
       </div>
 
       {interviews.length === 0 && (
-        <p className="text-sm text-muted-foreground">No interviews scheduled yet.</p>
+        <div className="flex flex-col items-center justify-center py-16 text-center gap-2">
+          <CalendarDays className="h-8 w-8 text-muted-foreground opacity-40" />
+          <p className="text-sm text-muted-foreground">No interviews scheduled yet.</p>
+        </div>
       )}
 
       <div className="space-y-6">
@@ -75,7 +78,7 @@ export default function CalendarPage() {
             <div className="space-y-2">
               {group.items.map((iv) => (
                 <Link key={iv.id} to={`/candidates/${iv.candidate.id}`}>
-                  <Card className="hover:border-primary transition-colors">
+                  <Card className="hover:border-primary hover:shadow-sm transition-all">
                     <CardContent className="pt-4 flex items-center justify-between gap-3">
                       <div>
                         <div className="font-medium text-sm">{iv.round}</div>
@@ -107,7 +110,7 @@ export default function CalendarPage() {
             <div className="space-y-2">
               {noDate.map((iv) => (
                 <Link key={iv.id} to={`/candidates/${iv.candidate.id}`}>
-                  <Card className="hover:border-primary transition-colors">
+                  <Card className="hover:border-primary hover:shadow-sm transition-all">
                     <CardContent className="pt-4 flex items-center justify-between gap-3">
                       <div>
                         <div className="font-medium text-sm">{iv.round}</div>
