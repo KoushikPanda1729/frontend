@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Candidates from "./pages/Candidates";
 import CandidateDetail from "./pages/CandidateDetail";
 import Employees from "./pages/Employees";
+import DailyAttendance from "./pages/DailyAttendance";
 import EmployeeDetail from "./pages/EmployeeDetail";
 import Notes from "./pages/Notes";
 import Assistant from "./pages/Assistant";
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="candidates" element={<Candidates />} />
         <Route path="candidates/:id" element={<CandidateDetail />} />
         <Route path="employees" element={<Employees />} />
+        <Route path="attendance" element={<DailyAttendance />} />
         <Route path="employees/:id" element={<EmployeeDetail />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="notes" element={<Notes />} />

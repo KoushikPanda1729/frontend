@@ -161,6 +161,10 @@ export const api = {
     URL.revokeObjectURL(objUrl);
   },
 
+  attendanceDay: (date) => request(`/employees/attendance/day?date=${date}`),
+  markAttendanceDay: (date, records) =>
+    request(`/employees/attendance/day`, { method: "PUT", body: JSON.stringify({ date, records }) }),
+
   attendance: (employeeId, month) => request(`/employees/${employeeId}/attendance?month=${month}`),
   markAttendance: (employeeId, data) =>
     request(`/employees/${employeeId}/attendance`, { method: "PUT", body: JSON.stringify(data) }),
