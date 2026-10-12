@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
@@ -15,7 +14,7 @@ import {
 import ConfirmDialog from "../components/ConfirmDialog";
 import AttendanceCalendar from "../components/AttendanceCalendar";
 import {
-  ArrowLeft, Upload, FileText, Trash2, Copy, Check, Pencil, AlertTriangle,
+  ArrowLeft, Trash2, Copy, Check, Pencil,
 } from "lucide-react";
 
 const STATUSES = ["ONBOARDING", "ACTIVE", "INACTIVE", "EXITED"];
@@ -136,41 +135,17 @@ export default function EmployeeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [docExpiry, setDocExpiry] = useState("");
   const [noteText, setNoteText] = useState("");
-  const [docDeleteTarget, setDocDeleteTarget] = useState(null);
   const [confirmDeleteEmployee, setConfirmDeleteEmployee] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
-  const fileRef = useRef();
 
   function load() {
     api.employee(id).then(setEmployee).catch(() => {});
   }
   useEffect(load, [id]);
 
-  async function onUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      await api.uploadDocument(id, file, file.name, docExpiry || undefined);
-      setDocExpiry("");
-      load();
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  }
-
   async function changeStatus(status) {
     await api.updateEmployee(id, { status });
-    load();
-  }
-
-  async function confirmRemoveDocument() {
-    await api.deleteDocument(docDeleteTarget);
-    setDocDeleteTarget(null);
     load();
   }
 
@@ -195,9 +170,6 @@ export default function EmployeeDetail() {
   }
 
   if (!employee) return <div className="p-6">Loading...</div>;
-
-  const today = new Date();
-  const expiringDocs = (employee.documents || []).filter((d) => d.expiryDate && new Date(d.expiryDate) <= new Date(today.getTime() + 60 * 86400000));
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
@@ -233,18 +205,10 @@ export default function EmployeeDetail() {
         </div>
       </div>
 
-      {expiringDocs.length > 0 && (
-        <div className="flex items-center gap-2 text-sm bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 rounded-md px-3 py-2">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
-          {expiringDocs.length} document(s) expiring soon: {expiringDocs.map((d) => d.name).join(", ")}
-        </div>
-      )}
-
       <Tabs defaultValue="overview">
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="attendance">Attendance</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -311,59 +275,8 @@ export default function EmployeeDetail() {
         <TabsContent value="attendance">
           <AttendanceCalendar employeeId={id} />
         </TabsContent>
-
-        <TabsContent value="documents">
-          <Card>
-            <CardHeader><CardTitle>Documents</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              <input ref={fileRef} type="file" className="hidden" onChange={onUpload} />
-              <div className="flex flex-wrap items-end gap-2">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Expiry date (optional)</Label>
-                  <Input type="date" className="w-[160px]" value={docExpiry} onChange={(e) => setDocExpiry(e.target.value)} />
-                </div>
-                <Button onClick={() => fileRef.current.click()} disabled={uploading} variant="outline">
-                  <Upload className="h-4 w-4" />
-                  {uploading ? "Uploading..." : "Upload document"}
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {employee.documents?.length === 0 && <p className="text-sm text-muted-foreground">No documents uploaded.</p>}
-                {employee.documents?.map((d) => (
-                  <div key={d.id} className="flex items-center justify-between border border-border rounded-md p-3 text-sm">
-                    <button
-                      onClick={() => api.downloadFile("document", d.id, d.name)}
-                      className="flex items-center gap-2 text-primary hover:underline"
-                    >
-                      <FileText className="h-4 w-4" />
-                      {d.name}
-                    </button>
-                    <div className="flex items-center gap-2">
-                      {d.expiryDate && (
-                        <Badge variant={new Date(d.expiryDate) < today ? "destructive" : "warning"} className="text-[10px]">
-                          Expires {new Date(d.expiryDate).toLocaleDateString()}
-                        </Badge>
-                      )}
-                      <Badge variant="secondary" className="text-[10px]">{new Date(d.uploadedAt).toLocaleDateString()}</Badge>
-                      <Button variant="ghost" size="icon" onClick={() => setDocDeleteTarget(d.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
-      <ConfirmDialog
-        open={!!docDeleteTarget}
-        onOpenChange={(open) => !open && setDocDeleteTarget(null)}
-        title="Delete this document?"
-        description="This cannot be undone."
-        onConfirm={confirmRemoveDocument}
-      />
       <ConfirmDialog
         open={confirmDeleteEmployee}
         onOpenChange={setConfirmDeleteEmployee}
