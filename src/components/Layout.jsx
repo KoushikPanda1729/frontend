@@ -39,8 +39,12 @@ export default function Layout() {
         )}
       >
         <div className="px-5 py-5 border-b border-border">
-          <div className="font-bold text-lg text-primary">HR Suite</div>
-          <div className="text-xs text-muted-foreground">AI-powered HR platform</div>
+          <img
+            src={dark ? "/images/intellify_logo_white.svg" : "/images/intellify_logo_night.svg"}
+            alt="IntellifyAi"
+            className="h-7 w-auto"
+          />
+          <div className="text-xs text-muted-foreground mt-1">AI-powered HR platform</div>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
           {NAV.map((item) => (
@@ -84,7 +88,11 @@ export default function Layout() {
           <button onClick={() => setOpen(true)}>
             <Menu className="h-6 w-6" />
           </button>
-          <span className="font-bold text-primary">HR Suite</span>
+          <img
+            src={dark ? "/images/intellify_logo_white.svg" : "/images/intellify_logo_night.svg"}
+            alt="IntellifyAi"
+            className="h-6 w-auto"
+          />
         </header>
         <main className="flex-1 min-w-0 overflow-y-auto">
           <Outlet />
